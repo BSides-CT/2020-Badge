@@ -1,0 +1,3 @@
+(sym_lib_table
+  (lib (name CR59HF)(type Legacy)(uri ~/ctf/bsidesct2020/2020-Badge/Hardware/Schematic/lib/CR59HF.lib)(options "")(descr ""))
+)

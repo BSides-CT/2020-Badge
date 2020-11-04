@@ -1,0 +1,4 @@
+(fp_lib_table
+  (lib (name CR95HF-antenna)(type KiCad)(uri /home/dvdfreitag/kicad/kicad_libraries/CR95HF-antenna.pretty)(options "")(descr ""))
+  (lib (name art)(type KiCad)(uri /home/dvdfreitag/kicad/bsidesct2019/art.pretty)(options "")(descr ""))
+)
