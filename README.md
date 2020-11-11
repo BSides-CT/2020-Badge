@@ -13,7 +13,7 @@ Source code, schematics, and advice for hacking the 2020 BSidesCT electronic bad
 
 It started in 2019 when we had a great idea to make a badge with an NFC card reader built into it. We were inspired by the [NFCopy85](https://salmg.net/2019/06/16/nfcopy85/) project and wanted to do something like it. After all, how cool would it be to use your BSidesCT badge to replay hotel key cards, smart locks, or credit card transactions?!
 
-![nfcopy85](/Users/jonw/ctf/bsidesct2020/2020-Badge/Images/nfcopy85.png)
+![nfcopy85](Images/nfcopy85.png)
 
 We designed the badge, ordered the PCBs, and started working on the software. We thought we gave sufficient lead time for the boards to be cut and shipped from China...but alas, they arrived to late to be distributed at last year's conference (hence the swell DIY badges we ~~threw together at the last possible second~~ ended up with).
 
@@ -34,7 +34,7 @@ Undeterred, we set out to crack this nut, or at the very least make some LEDs bl
 
 There were also six contact pads arranged in a way that looked like Serial Wire Debug (SWD/JTAG), which should provide a way to program the microcontroller.
 
-![components](/Users/jonw/ctf/bsidesct2020/2020-Badge/Images/components.jpg)
+![components](Images/components.jpg)
 
 From there, we started examining traces, mapping pins, testing connectivity, and generally trying to figure out What Stuff Does™. After many interations and improvements, we finally identified the exact components and pinouts in use. Without further ado, here they are.
 
@@ -43,19 +43,19 @@ From there, we started examining traces, mapping pins, testing connectivity, and
 - [Datasheet summary](https://github.com/BSides-CT/2020-Badge/blob/main/Hardware/Atmel-SAM-D11-Summary.pdf)
 - [Datasheet](https://github.com/BSides-CT/2020-Badge/blob/main/Hardware/Atmel-SAM-D11-Datasheet.pdf)
 - Pinout:
-  ![mcu-pinout](/Users/jonw/ctf/bsidesct2020/2020-Badge/Images/mcu-pinout.png)
+  ![mcu-pinout](Images/mcu-pinout.png)
 
 #### NFC: CR95HF
 
 - [Datasheet](https://github.com/BSides-CT/2020-Badge/blob/main/Hardware/CR95HF-Datasheet.pdf)
 - Pinout:
-  ![nfc-pinout](/Users/jonw/ctf/bsidesct2020/2020-Badge/Images/nfc-pinout.png)
+  ![nfc-pinout](Images/nfc-pinout.png)
 
 We did not identify any additional storage components, so the 16 KB of flash storage available on the SAMD11 was all we would have to work with.
 
 In order to program the badge, we acquired a [J-Link EDU Mini](https://www.segger.com/products/debug-probes/j-link/models/j-link-edu-mini/) (later replaced with an [Atmel ICE](https://www.microchip.com/DevelopmentTools/ProductDetails/atatmel-ice)) and relied on our trusty multimeter to map the SWD pinout on the PCB:
 
-![swd-pcb](/Users/jonw/ctf/bsidesct2020/2020-Badge/Images/swd-pcb.png)
+![swd-pcb](Images/swd-pcb.png)
 
 We soldered on some wires, plugged them into the J-Link, and fired up [Atmel Studio](https://www.microchip.com/mplab/avr-support/atmel-studio-7) to write some code.
 
@@ -63,7 +63,7 @@ We soldered on some wires, plugged them into the J-Link, and fired up [Atmel Stu
 
 Thanks to Atmel Start, it was pretty simple at that point to load up some basic drivers for the SAMD11AM, identify which pins had LEDs attached to them, and write some basic code to make them blink. The J-Link worked like a charm for this simple task.
 
-![led-test](/Users/jonw/ctf/bsidesct2020/2020-Badge/Images/led-test.gif)
+![led-test](Images/led-test.gif)
 
 We added in some functions to make the LEDs blink in fun patterns and decided that, if nothing else, at least we could ship the badges with [that simple program](https://github.com/BSides-CT/2020-Badge/tree/main/Software/LEDBlink). Feel free to customize it to blink however you want it to!
 
@@ -78,9 +78,9 @@ Fortunately, Atmel Start also makes it pretty simple to support these features. 
 
 We configured Atmel Start with the appropriate drivers, mapped the pins appropriately, and then spent a lot of time fussing with the clock configurations (and datasheets) to get everything playing nicely. In the end, this is what our driver stack and clock configs looked like:
 
-![drivers](/Users/jonw/ctf/bsidesct2020/2020-Badge/Images/drivers.png)
+![drivers](Images/drivers.png)
 
-![clocks](/Users/jonw/ctf/bsidesct2020/2020-Badge/Images/clocks.png)
+![clocks](Images/clocks.png)
 
 The project compiled successfully with the USB drivers, and when we plugged the badge into a computer, it showed up as a COM port in the Device Manager (hooray!). Unfortunately, this is where our luck began to run out. We tried to get the badge to print simple text messages to serial output over USB, but no matter how we attempted to connect to the virtual terminal (or at what baud rate), no messages were ever displayed. We did some troubleshooting and were able to determine that the USB drivers initiated successfully and the serial write function completed successfully, so we were mystified about where communication broke down.
 
@@ -104,7 +104,7 @@ Along the way, we discovered several problems that stopped us from reaching our 
 
 - Programming the badges en masse proved to be a challenge, as the SWD pin pads do not map to any standard configuration. As such, we had to build our own adapter to remap the standard 10-pin cable from our Atmel ICE programmer to a standard 6-pin TC2030 programming cable.
 
-  ![adapter](/Users/jonw/ctf/bsidesct2020/2020-Badge/Images/adapter.jpg)
+  ![adapter](Images/adapter.jpg)
 
   We don't recommend doing it this way, which was only really necessary for mass production – you're better off just soldering wires onto the badge to program it. Follow the SWD pinout we posted above, and you should be good to go!
 
